@@ -7,7 +7,7 @@ namespace OfferManagement.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -20,6 +20,13 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
+        // Check if user is admin of their company
+        var userRoles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
+        if (!userRoles.Contains("Admin"))
+        {
+            return Forbid("Admin access required");
+        }
+        
         var companyIdClaim = User.FindFirst("CompanyId")?.Value;
         if (companyIdClaim == null || !int.TryParse(companyIdClaim, out var companyId))
         {
@@ -33,6 +40,13 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
+        // Check if user is admin of their company
+        var userRoles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
+        if (!userRoles.Contains("Admin"))
+        {
+            return Forbid("Admin access required");
+        }
+        
         var companyIdClaim = User.FindFirst("CompanyId")?.Value;
         if (companyIdClaim == null || !int.TryParse(companyIdClaim, out var companyId))
         {

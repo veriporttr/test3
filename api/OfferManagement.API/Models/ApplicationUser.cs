@@ -10,5 +10,6 @@ public class ApplicationUser : IdentityUser
     public Company? Company { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = true;
+    public bool IsSuperAdmin { get; set; } = false;
     public ICollection<Offer> Offers { get; set; } = new List<Offer>();
 }

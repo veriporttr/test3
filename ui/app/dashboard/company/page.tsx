@@ -242,31 +242,27 @@ export default function CompanyPage() {
             <h2 className="text-lg font-semibold">Abonelik Bilgileri</h2>
           </div>
           <div className="card-body">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mevcut Plan
+                  Abonelik Durumu
                 </label>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <span className="font-medium capitalize">{company.subscriptionPlan}</span>
+                <div className={`p-3 rounded-lg ${
+                  company.hasActiveSubscription ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                }`}>
+                  <span className="font-medium">
+                    {company.hasActiveSubscription ? 'Aktif (₺99/ay)' : 'Pasif'}
+                  </span>
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Başlangıç Tarihi
+                  Son Ödeme Tarihi
                 </label>
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  {new Date(company.subscriptionStartDate).toLocaleDateString('tr-TR')}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bitiş Tarihi
-                </label>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  {company.subscriptionEndDate
-                    ? new Date(company.subscriptionEndDate).toLocaleDateString('tr-TR')
-                    : 'Sınırsız'
+                  {company.subscriptionStartDate
+                    ? new Date(company.subscriptionStartDate).toLocaleDateString('tr-TR')
+                    : 'Henüz ödeme yapılmamış'
                   }
                 </div>
               </div>

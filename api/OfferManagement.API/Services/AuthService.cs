@@ -164,7 +164,8 @@ public class AuthService : IAuthService
             new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.Email, user.Email!),
             new(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-            new("CompanyId", user.CompanyId?.ToString() ?? "")
+            new("CompanyId", user.CompanyId?.ToString() ?? ""),
+            new("IsSuperAdmin", user.IsSuperAdmin.ToString())
         };
 
         var roles = await _userManager.GetRolesAsync(user);

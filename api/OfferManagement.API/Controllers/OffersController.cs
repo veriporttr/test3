@@ -26,7 +26,8 @@ public class OffersController : ControllerBase
             return BadRequest("Invalid user");
         }
 
-        var offers = await _offerService.GetOffersByUserAsync(userId, page, pageSize);
+        // Get user's company offers instead of just user's offers
+        var offers = await _offerService.GetOffersByCompanyAsync(userId, page, pageSize);
         return Ok(offers);
     }
 

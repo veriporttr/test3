@@ -83,14 +83,43 @@ public class OfferService : IOfferService
 
         return offers.Select(MapToDto).ToList();
     }
+    
+    public async Task<List<OfferDto>> GetOffersByCompanyAsync(string userId, int page = 1, int pageSize = 10)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user?.CompanyId == null) return new List<OfferDto>();
 
+        var offers = await _context.Offers
+            .Include(o => o.Items)
+            .Include(o => o.Company)
+            .Include(o => o.User)
+            .Where(o => o.CompanyId == user.CompanyId)
+            .OrderByDescending(o => o.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return offers.Select(MapToDto).ToList();
+    }
     public async Task<OfferDto?> UpdateOfferAsync(int id, UpdateOfferRequest request, string userId)
     {
         var offer = await _context.Offers
             .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+            .FirstOrDefaultAsync(o => o.Id == id);
 
         if (offer == null) return null;
+        
+        // Check if user can edit this offer (only creator or admin can edit)
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var userRoles = await _context.UserRoles
+            .Where(ur => ur.UserId == userId)
+            .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
+            .ToListAsync();
+            
+        if (offer.UserId != userId && !userRoles.Contains("Admin"))
+        {
+            return null; // User cannot edit offers they didn't create unless they're admin
+        }
 
         offer.CustomerName = request.CustomerName;
         offer.CustomerEmail = request.CustomerEmail;
@@ -121,9 +150,21 @@ public class OfferService : IOfferService
     public async Task<bool> DeleteOfferAsync(int id, string userId)
     {
         var offer = await _context.Offers
-            .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+            .FirstOrDefaultAsync(o => o.Id == id);
 
         if (offer == null) return false;
+        
+        // Check if user can delete this offer (only creator or admin can delete)
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var userRoles = await _context.UserRoles
+            .Where(ur => ur.UserId == userId)
+            .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
+            .ToListAsync();
+            
+        if (offer.UserId != userId && !userRoles.Contains("Admin"))
+        {
+            return false; // User cannot delete offers they didn't create unless they're admin
+        }
 
         _context.Offers.Remove(offer);
         await _context.SaveChangesAsync();

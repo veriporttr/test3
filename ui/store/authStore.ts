@@ -10,6 +10,8 @@ interface User {
   companyId?: number;
   isActive: boolean;
   createdAt: string;
+  isSuperAdmin?: boolean;
+  roles?: string[];
 }
 
 interface AuthState {

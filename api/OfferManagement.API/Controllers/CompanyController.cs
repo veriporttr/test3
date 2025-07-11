@@ -38,6 +38,13 @@ public class CompanyController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateCompany([FromBody] UpdateCompanyRequest request)
     {
+        // Check if user is admin of their company
+        var userRoles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
+        if (!userRoles.Contains("Admin"))
+        {
+            return Forbid("Admin access required");
+        }
+        
         var companyIdClaim = User.FindFirst("CompanyId")?.Value;
         if (companyIdClaim == null || !int.TryParse(companyIdClaim, out var companyId))
         {
@@ -56,6 +63,13 @@ public class CompanyController : ControllerBase
     [HttpPost("logo")]
     public async Task<IActionResult> UploadLogo([FromForm] IFormFile logo)
     {
+        // Check if user is admin of their company
+        var userRoles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
+        if (!userRoles.Contains("Admin"))
+        {
+            return Forbid("Admin access required");
+        }
+        
         var companyIdClaim = User.FindFirst("CompanyId")?.Value;
         if (companyIdClaim == null || !int.TryParse(companyIdClaim, out var companyId))
         {

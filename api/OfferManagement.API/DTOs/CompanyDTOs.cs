@@ -11,9 +11,10 @@ public class CompanyDto
     public string? TaxNumber { get; set; }
     public string? IBAN { get; set; }
     public string? Website { get; set; }
-    public string SubscriptionPlan { get; set; } = string.Empty;
-    public DateTime SubscriptionStartDate { get; set; }
+    public bool HasActiveSubscription { get; set; }
+    public DateTime? SubscriptionStartDate { get; set; }
     public DateTime? SubscriptionEndDate { get; set; }
+    public decimal MonthlyFee { get; set; }
     public bool IsActive { get; set; }
 }
 

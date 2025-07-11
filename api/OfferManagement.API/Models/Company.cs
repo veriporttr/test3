@@ -26,11 +26,13 @@ public class Company
     
     public string? Website { get; set; }
     
-    public SubscriptionPlan SubscriptionPlan { get; set; } = SubscriptionPlan.Free;
+    public bool HasActiveSubscription { get; set; } = false;
     
-    public DateTime SubscriptionStartDate { get; set; } = DateTime.UtcNow;
+    public DateTime? SubscriptionStartDate { get; set; }
     
     public DateTime? SubscriptionEndDate { get; set; }
+    
+    public decimal MonthlyFee { get; set; } = 99.00m;
     
     public bool IsActive { get; set; } = true;
     
@@ -39,11 +41,4 @@ public class Company
     public ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
     
     public ICollection<Offer> Offers { get; set; } = new List<Offer>();
-}
-
-public enum SubscriptionPlan
-{
-    Free,
-    Pro,
-    Enterprise
 }

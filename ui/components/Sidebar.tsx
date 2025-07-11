@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -11,7 +12,8 @@ import {
   CreditCard, 
   Settings,
   Menu,
-  X
+  X,
+  Shield
 } from 'lucide-react';
 
 const navigation = [
@@ -23,9 +25,13 @@ const navigation = [
   { name: 'Ayarlar', href: '/dashboard/settings', icon: Settings },
 ];
 
+const superAdminNavigation = [
+  { name: 'Super Admin', href: '/super-admin', icon: Shield },
+];
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuthStore();
 
   return (
     <>
@@ -50,7 +56,37 @@ export default function Sidebar() {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
+            {/* Super Admin Navigation */}
+            {user?.isSuperAdmin && (
+              <>
+                {superAdminNavigation.map((item) => {
+                  const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-red-50 text-red-700 border-r-2 border-red-500'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5 mr-3" />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+                <div className="border-t my-4"></div>
+              </>
+            )}
+            
             {navigation.map((item) => {
+              // Hide admin-only items for non-admin users
+              if (item.adminOnly && !user?.roles?.includes('Admin')) {
+                return null;
+              }
+              
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link

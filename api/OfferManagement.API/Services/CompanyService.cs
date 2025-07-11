@@ -87,9 +87,10 @@ public class CompanyService : ICompanyService
             TaxNumber = company.TaxNumber,
             IBAN = company.IBAN,
             Website = company.Website,
-            SubscriptionPlan = company.SubscriptionPlan.ToString(),
+            HasActiveSubscription = company.HasActiveSubscription,
             SubscriptionStartDate = company.SubscriptionStartDate,
             SubscriptionEndDate = company.SubscriptionEndDate,
+            MonthlyFee = company.MonthlyFee,
             IsActive = company.IsActive
         };
     }

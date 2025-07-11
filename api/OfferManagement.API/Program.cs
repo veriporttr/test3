@@ -52,6 +52,7 @@ builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ISuperAdminService, SuperAdminService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
